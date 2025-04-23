@@ -3,7 +3,7 @@ from django.db import models
 
 class Course(models.Model):
     name = models.CharField(max_length=150, verbose_name='Название курса')
-    image = models.ImageField(upload_to='images_courses/')
+    image = models.ImageField(upload_to='images_courses/', blank=True, null=True)
     description = models.TextField(verbose_name='Описание курса')
 
     class Meta:
@@ -17,8 +17,8 @@ class Course(models.Model):
 class Lesson(models.Model):
     name = models.CharField(max_length=150, verbose_name='Название урока')
     description = models.TextField(verbose_name='Описание урока')
-    image = models.ImageField(upload_to='images_lessons/')
-    link = models.TextField(verbose_name='Ссылка на видео')
+    image = models.ImageField(upload_to='images_lessons/', blank=True, null=True)
+    link = models.TextField(verbose_name='Ссылка на видео', blank=True, null=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='Курс', related_name='lessons')
 
     class Meta:
