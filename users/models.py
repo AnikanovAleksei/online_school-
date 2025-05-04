@@ -4,12 +4,13 @@ from school.models import Course, Lesson
 
 
 class SchoolUser(AbstractUser):
+    username = None
     first_name = models.CharField(max_length=150, verbose_name='Имя')
     last_name = models.CharField(max_length=150, verbose_name='Фамилия')
     email = models.EmailField(unique=True, verbose_name='Почта')
     phone_number = models.CharField(max_length=20, verbose_name='Номер телефона')
     city = models.CharField(max_length=50, verbose_name='Город')
-    avatar = models.ImageField(upload_to='avatars/')
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
