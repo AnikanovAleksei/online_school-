@@ -45,3 +45,15 @@ class Payment(models.Model):
 
     def __str__(self):
         return f"Платёж {self.user} на сумму {self.amount} ({self.payment_date})"
+
+
+class Subscription(models.Model):
+    user = models.ForeignKey(SchoolUser, on_delete=models.CASCADE, verbose_name='Пользователь')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='Курс')
+
+    class Meta:
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+
+    def __str__(self):
+        return f"Пользователь - {self.user}, курс - {self.course}"

@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.permissions import AllowAny
 from rest_framework.routers import DefaultRouter
-from .views import PaymentViewSet
+from .views import PaymentViewSet, SubscriptionAPIView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -22,4 +22,5 @@ urlpatterns = [
     path('destroy/<int:pk>/', UserDestroyAPIView.as_view(), name='destroy'),
     path('login/', TokenObtainPairView.as_view(permission_classes=(AllowAny,)), name='login'),
     path('token/refresh/', TokenRefreshView.as_view(permission_classes=(AllowAny,)), name='token_refresh'),
+    path('subscription/', SubscriptionAPIView.as_view(), name='subscription'),
 ] + router.urls
