@@ -38,6 +38,8 @@ class Payment(models.Model):
                                     null=True, related_name='payments')
     amount = models.IntegerField(verbose_name='Сумма оплаты')
     payment_method = models.CharField(max_length=15, choices=PAYMENT_METHOD_CHOICES, verbose_name='Способ оплаты')
+    stripe_id = models.CharField(max_length=100, blank=True, null=True)
+    payment_url = models.URLField(blank=True, null=True)
 
     class Meta:
         verbose_name = 'Платеж'

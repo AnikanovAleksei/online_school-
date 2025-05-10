@@ -11,6 +11,8 @@ from .serializers import PaymentSerializer, SchoolUserSerializer
 from .filters import PaymentFilter
 from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView, get_object_or_404
 
+from .services import create_stripe_product, create_stripe_price, stripe_session_create
+
 
 class PaymentViewSet(viewsets.ModelViewSet):
     queryset = Payment.objects.all()
@@ -85,3 +87,20 @@ class SubscriptionAPIView(APIView):
             status_code = status.HTTP_201_CREATED
 
         return Response({"message": message}, status=status_code)
+
+
+class PaymentCreateAPIView(CreateAPIView):
+    serializer_class = PaymentSerializer
+    queryset = Payment.objects.all()
+
+    def perform_create(self, serializer):
+        payment = serializer.save(user=self.request.user)
+
+        if payment.payment_method == 'transfer':
+            product_id = create_stripe_product(f"Оплата: {payment.paid_course or payment.paid_lesson}")
+            price = create_stripe_price(product_id, payment.amount)
+
+            session_id, session_url = stripe_session_create(price)
+            payment.stripe_id = session_id
+            payment.payment_url = session_url
+            payment.save()
