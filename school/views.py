@@ -7,6 +7,7 @@ from .models import Course, Lesson
 from .paginators import CourseLessonPaginator
 from .serializers import CourseSerializer, LessonSerializer
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView
+from .tasks import send_course_update_notification
 
 
 class CourseViewSet(ModelViewSet):
@@ -18,6 +19,10 @@ class CourseViewSet(ModelViewSet):
         course = serializer.save()
         course.owner = self.request.user
         course.save()
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        send_course_update_notification.delay(instance.id)
 
     def get_permissions(self):
         if self.action in ['create', 'destroy']:
