@@ -93,6 +93,67 @@ POSTGRES_PASSWORD=yourpassword
 CELERY_BROKER_URL=redis://redis:6379/0
 ```
 
+# 🚀 Инструкция по развертыванию
+
+## 1. Настройка удаленного сервера
+
+### 📋 Требования
+- Сервер с ОС Ubuntu 20.04/22.04
+- Открытые порты: `80 (HTTP)`, `22 (SSH)`
+- Доступ по SSH с правами `sudo`
+
+### 🛠 Шаги установки
+
+#### 1. Установите Docker и Docker Compose
+```bash
+sudo apt update
+sudo apt install -y docker.io
+sudo systemctl enable docker
+sudo curl -L "https://github.com/docker/compose/releases/download/v2.23.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+```
+#### 2. Настройте фаервол
+```bash
+sudo ufw allow 80
+sudo ufw allow 22
+sudo ufw allow 443/tcp
+sudo ufw enable
+```
+#### 3. Добавьте пользователя в группу docker
+```bash
+sudo usermod -aG docker $USER
+newgrp docker
+```
+#### 4. 🔍 Проверка установки
+```bash
+docker --version
+docker-compose --version
+```
+## 2. Настройка GitHub Secrets
+```commandline
+Необходимые секреты
+
+Название	              Описание
+DOCKER_HUB_USERNAME	      Ваш логин Docker Hub
+DOCKER_HUB_TOKEN	      Токен доступа Docker Hub
+SSH_KEY	                  Приватный SSH-ключ сервера
+SERVER_IP	              IP-адрес вашего сервера
+```
+
+## 3. Запуск приложения
+```commandline
+Сборка образа
+docker build -t your_app_name .
+
+Запуск контейнера
+docker run -d -p 80:8000 --name app_container your_app_name
+```
+## 🌐 Доступ к приложению
+```commandline
+Откройте в браузере:
+http://ваш_сервер_ip
+```
+
 ## 📄 Лицензия
 
 Укажите вашу лицензию (MIT, Apache и т.д.)
