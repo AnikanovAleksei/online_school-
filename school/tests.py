@@ -22,10 +22,14 @@ class CourseTestCase(APITestCase):
     def test_course_retrieve(self):
         url = reverse("school:courses-detail", args=(self.course.pk,))
         response = self.client.get(url)
+
+        # Проверка статус-кода
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Проверка содержимого ответа (добавлено использование data)
         data = response.json()
-        self.assertEqual(
-            response.status_code, status.HTTP_200_OK
-        )
+        self.assertEqual(data['id'], self.course.pk)  # Пример проверки ID
+        self.assertIn('name', data)  # Проверка наличия поля
 
 
 class LessonCRUDTestCase(APITestCase):
