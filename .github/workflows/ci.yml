@@ -62,28 +62,28 @@ jobs:
         run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
 
   deploy:
-    needs: build
-    runs-on: ubuntu-latest
+      needs: build
+      runs-on: ubuntu-latest
 
-    steps:
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_KEY }}
+      steps:
+        - name: Set up SSH
+          uses: webfactory/ssh-agent@v0.9.0
+          with:
+            ssh-private-key: ${{ secrets.SSH_KEY }}
 
-      - name: Deploy on server
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-          # Check if image exists locally before pulling
-          if ! docker inspect --type=image ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }} >/dev/null 2>&1; then
+        - name: Deploy on server
+          run: |
+            ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+            # Login to Docker Hub on server
+            echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+
+            # Pull image with authentication
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }} || exit 1
-          fi
-          
-          if docker ps -a --format '{{.Names}}' | grep -q '^myapp$'; then
+
+            # Stop and remove existing container if exists
             docker stop myapp || true
             docker rm myapp || true
-            sleep 2  # Give some time for cleanup
-          fi
-          
-          docker run -d --name myapp -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
-          EOF
+
+            # Run new container
+            docker run -d --name myapp -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
+            EOF
