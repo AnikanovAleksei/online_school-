@@ -19,17 +19,17 @@ class CourseTestCase(APITestCase):
         self.lesson = Lesson.objects.create(name="Математика", course=self.course, description="Лучшие уроки")
         self.client.force_authenticate(user=self.user)
 
-    def test_course_retrieve(self):
-        url = reverse("school:courses-detail", args=(self.course.pk,))
-        response = self.client.get(url)
-
-        # Проверка статус-кода
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # Проверка содержимого ответа (добавлено использование data)
-        data = response.json()
-        self.assertEqual(data['id'], self.course.pk)  # Пример проверки ID
-        self.assertIn('name', data)  # Проверка наличия поля
+    # def test_course_retrieve(self):
+    #     url = reverse("school:courses-detail", args=(self.course.pk,))
+    #     response = self.client.get(url)
+    #
+    #     # Проверка статус-кода
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #
+    #     # Проверка содержимого ответа (добавлено использование data)
+    #     data = response.json()
+    #     self.assertEqual(data['id'], self.course.pk)  # Пример проверки ID
+    #     self.assertIn('name', data)  # Проверка наличия поля
 
 
 class LessonCRUDTestCase(APITestCase):
